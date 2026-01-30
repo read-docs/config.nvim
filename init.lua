@@ -166,6 +166,13 @@ vim.opt.scrolloff = 10
 -- See `:help 'confirm'`
 vim.opt.confirm = true
 
+-- Force .asm to be NASM
+-- vim.filetype.add {
+--   extension = {
+--     asm = 'nasm',
+--   },
+-- }
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -637,14 +644,20 @@ require('lazy').setup({
         severity_sort = true,
         float = { border = 'rounded', source = 'if_many' },
         underline = { severity = vim.diagnostic.severity.ERROR },
-        signs = vim.g.have_nerd_font and {
-          text = {
-            [vim.diagnostic.severity.ERROR] = '󰅚 ',
-            [vim.diagnostic.severity.WARN] = '󰀪 ',
-            [vim.diagnostic.severity.INFO] = '󰋽 ',
-            [vim.diagnostic.severity.HINT] = '󰌶 ',
-          },
-        } or {},
+        signs = vim.g.have_nerd_font
+            and {
+              text = {
+                [vim.diagnostic.severity.ERROR] = 'E',
+                [vim.diagnostic.severity.WARN] = 'W',
+                [vim.diagnostic.severity.INFO] = 'I',
+                [vim.diagnostic.severity.HINT] = 'H',
+                -- [vim.diagnostic.severity.ERROR] = '󰅚 ',
+                -- [vim.diagnostic.severity.WARN] = '󰀪 ',
+                -- [vim.diagnostic.severity.INFO] = '󰋽 ',
+                -- [vim.diagnostic.severity.HINT] = '󰌶 ',
+              },
+            }
+          or {},
         virtual_text = {
           source = 'if_many',
           spacing = 2,
@@ -676,12 +689,18 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+
         gopls = {
           settings = {
             format = {
               indent = 'tab',
             },
+          },
+        },
+
+        asm_lsp = {
+          settings = {
+            assembler = 'nasm',
           },
         },
         -- pyright = {},
@@ -975,7 +994,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    main = 'nvim-treesitter', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
